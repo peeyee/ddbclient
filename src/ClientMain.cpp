@@ -1,25 +1,45 @@
 #include <iostream>
-#include "ParseOptions.h"
 #include "Client.h"
-
-const std:string VERSION = "0.1";
+#include "DolphinDB.h"
+#include  <boost/program_options.hpp>
+namespace po = boost::program_options;
+const std::string VERSION = "0.1";
 
 inline void showPrompt();
 
-int main(int argc, char* argv){
+int main(int argc, char* argv[]){
     using namespace std;
-    const prompt = "> ";
-    ParseOption parser;
-    variables_map vm = parser.parse(argc, argv);
-    string host = vm["host"].as<string>();
-    int port = vm["port"].as<int>();
-    string username =  vm["username"].as<string>();
-    string password =  vm["password"].as<string>();
+    po::options_description desc("DolphinDB client " + VERSION);
+    desc.add_options()
+        ("help", "show help message")
+        ("host,h", po::value<std::string>(), "the ip/hostname connect to")
+        ("port,p", po::value<int>(), "the port of DolphinDB node")
+        ("username,u", po::value<std::string>(), "username")
+        ("password", po::value<std::string>(), "password");
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+    string host, username, password;
+    int port;
+    try{
+	if(argc < 4 || vm.count("help")){
+            cout << desc << endl;
+            return 0;
+        }
+        host = vm["host"].as<string>();
+        port = vm["port"].as<int>();
+        username =  vm["username"].as<string>();
+        password =  vm["password"].as<string>();
+    }catch(exception& e){
+        cout << "parse input failed, exit." << endl;
+        exit(2); 
+    }    
     Client client;
     client.connect(host, port, username, password);
-    if(client.isConnected){
-        cout << "Welcome to DolphinDB " << client.run("verion()") -> getString() << endl;
+    if(client.isConnected()){
+        cout << "Welcome to DolphinDB " << client.runInteractive("version()") -> getString() << endl;
     }else{
+        cout << "failed connect to DolphinDB " + host + ":" + to_string(port) << endl;
         exit(1);
     }
         
@@ -34,10 +54,10 @@ int main(int argc, char* argv){
             }
             try
             {
-                ConstantSP rst = client.runInteractive(cmd);
+                dolphindb::ConstantSP rst = client.runInteractive(cmd);
                 cout << rst -> getString() << endl;
             }
-            catch(const std::exception& e)
+            catch(exception& e)
             {
                 cout << "run command failed: " << e.what() << '\n';
             }
@@ -50,6 +70,7 @@ int main(int argc, char* argv){
     return 0;
 }
 
-showPrompt(){
-    std::cout<< "> " << std::endl;
+void showPrompt(){
+    std::cout << "> " ;
 }
+

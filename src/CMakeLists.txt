@@ -1,0 +1,7 @@
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+add_executable(ddbclient Client.cpp ClientMain.cpp)
+include_directories(include/dolphindb)
+target_link_libraries (ddbclient libssl.so)
+target_link_libraries (ddbclient libboost_program_options.so)
+target_link_libraries (ddbclient libDolphinDBAPI.so)
