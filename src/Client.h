@@ -12,7 +12,7 @@ class Client
     public:
         Client():connected_(false),isInactive_(true){};
         ~Client(){};
-        dolphindb::ConstantSP runInteractive(std::string cmd); 
+        void runInteractive(std::string cmd); 
         bool isInteractiveMode(){ return isInactive_; };
         dolphindb::ConstantSP runNonInteractive(std::string cmd);
         bool connect(string host, int port, string username, string password);

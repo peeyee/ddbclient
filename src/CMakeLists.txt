@@ -1,8 +1,17 @@
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+file(GLOB SOURCES "*.cpp")
+
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Debug") 
+else()
+	set(CMAKE_BUILD_TYPE "Release")  
+endif()
 
 if(UNIX)
 	add_definitions(-DLINUX -D_GLIBCXX_USE_CXX11_ABI=1)
+
+
 	set(PROGRAM_OPTIONS libboost_program_options.a) 
 	set(DDBAPI libDolphinDBAPI.a) 
 
@@ -13,7 +22,7 @@ if(UNIX)
 	endif()    
 	include_directories(include/dolphindb)
 	link_directories(${PROJECT_SOURCE_DIR}/lib)
-	link_libraries(${PROGRAM_OPTIONS} ${DDBAPI})
-	add_executable(ddbclient Client.cpp ClientMain.cpp)
-#target_link_libraries(ddbclient ssl uuid) 
+	link_libraries(${PROGRAM_OPTIONS})
+	add_executable(ddbclient ${SOURCES})
+	target_link_libraries(ddbclient DolphinDBAPI) 
 endif()
