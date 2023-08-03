@@ -15,3 +15,4 @@ EOF
 
 echo "    Enviroment configure successfully."
 echo "    Install finished."
+source ~/.bashrc

@@ -2,6 +2,7 @@
 A terminal that supports connections to dolphindb >= 1.30.21, 2.00.9.
 
 ## 1 build and install
+### 1.1 build
 Clone this project, and use cmake to build it. Currently, it only supports linux.
 ```shell
 git clone https://github.com/peeyee/ddbclient
@@ -18,7 +19,11 @@ cd ~ && vi .bashrc
 export PATH="$PATH:$HOME/bin:/usr/local/bin" #add this to .bashrc
 source .bashrc
 ```
-
+### 1.2 install
+```shell
+sudo -E ./install.sh
+```
+Ddbclient will be copied to /usr/local/bin and configure the environment variables.
 
 ## 2 basic usage
 Run `ddbclient` to get a brief mannual.
