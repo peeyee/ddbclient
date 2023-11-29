@@ -1,12 +1,33 @@
 # ddbclient
-A terminal that supports connections to dolphindb >= 1.30.21, 2.00.9.
+A terminal that supports connecting to DolphinDB >= 1.30.21, 2.00.9.By now, It supports the following operating system.
 
-## 1 build and install
-### 1.1 build
+|OS|Version|
+| ------ | ----- |
+|Linux|Ubuntu>=18.04, CentOS>=7.9|
+|MacOS|Not supported yet|
+
+
+## 1 install
+
+### 1.1 binary install
+```shell
+tar -zxvf ddbclient-0.1.0-Linux.tar.gz
+```
+### 1.2 centos
+```
+rpm -ivh ddbclient-0.1.0-Linux.tar.gz
+```
+### 1.3 ubuntu
+```
+dpkg -i ddbclient-0.1.0-Linux.deb
+```
+Ddbclient will be copied to /usr/local/bin and configure the environment variables.
+
+### 1.2 build by source
 Clone this project, and use cmake to build it. Currently, it only supports linux.
 ```shell
 git clone https://github.com/peeyee/ddbclient
-git checkout 0.1.alpha
+git checkout 0.1.0
 cmake -B build -DCMAKE_BUILD_TYPE=release -S .
 cd build/ && make
 sudo make install
@@ -19,11 +40,6 @@ cd ~ && vi .bashrc
 export PATH="$PATH:$HOME/bin:/usr/local/bin" #add this to .bashrc
 source .bashrc
 ```
-### 1.2 install
-```shell
-sudo -E ./install.sh
-```
-Ddbclient will be copied to /usr/local/bin and configure the environment variables.
 
 ## 2 basic usage
 Run `ddbclient` to get a brief mannual.
@@ -38,7 +54,7 @@ DolphinDB client 0.1.alpha:
   -f [ --file ] arg     read script from a file
   -s [ --script ] arg   the script to run
 ```
-### activeMode
+### 2.1 activeMode
 Without -f or -s options, it is considered as active mode, which you can
 send script to server and watch the result and continue doing this. The result may be formatted to make it more readable. Set the basic options to connect to dolphindb.
 ``` shell
@@ -78,7 +94,7 @@ Use **q** or **quit** to exit the terminal.
 Bye.
 ```
 
-### inActiveMode
+### 2.2 inActiveMode
 * s, script
 
 Wrapping dolphinDB script with double quotes, For example:
