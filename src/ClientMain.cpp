@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
             getline(cin, cmd);
             if(cmd == "q" || cmd == "quit"){
                 cout << "Bye." << endl;
-                return 0;
+                break;
             }
             try
             {
@@ -96,9 +96,8 @@ int main(int argc, char* argv[]){
             }
         }
     }
-        
 
-
+    client.close();
     return 0;
 }
 

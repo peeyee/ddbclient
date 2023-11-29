@@ -19,4 +19,7 @@ class Client
         bool isConnected(){
             return connected_;
         };
+        void close(){
+            conn_.close();
+        }
 };
