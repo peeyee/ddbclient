@@ -11,13 +11,12 @@ endif()
 if(UNIX)
 	add_definitions(-DLINUX -D_GLIBCXX_USE_CXX11_ABI=1)
 
-	set(PROGRAM_OPTIONS libboost_program_options.a) 
 	set(DDBAPI libDDBAPI.a) 
-	
 	include_directories(include)
 	include_directories(include/dolphindb)
 	link_directories(${PROJECT_SOURCE_DIR}/lib)
-	link_libraries(${PROGRAM_OPTIONS} ${DDBAPI})
+	link_libraries(${DDBAPI})
+
 	add_executable(ddbclient ${SOURCES})
 	target_link_libraries(ddbclient pthread rt dl) 
 endif()

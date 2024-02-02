@@ -2,38 +2,39 @@
 #include "Client.h"
 #include "FileReader.h"
 #include "DolphinDB.h"
-#include  <boost/program_options.hpp>
-namespace po = boost::program_options;
-const std::string VERSION = "0.1.alpha";
+#include "cmdline.h"
+
+
+const std::string VERSION = "0.1.1";
 
 inline void showPrompt();
 void showBanner();
 
+//TODO parse args by cmdline
 int main(int argc, char* argv[]){
     using namespace std;
-    po::options_description desc("DolphinDB client " + VERSION);
-    desc.add_options()
-        ("help", "show help message")
-        ("host,h", po::value<std::string>(), "the ip/hostname connect to")
-        ("port,p", po::value<int>(), "the port of DolphinDB node")
-        ("username,u", po::value<std::string>(), "username")
-        ("password", po::value<std::string>(), "password")
-        ("file,f",  po::value<std::string>(), "read script from a file")
-        ("script,s",  po::value<std::string>(), "the script to run");
-    po::variables_map vm;
+
+    cmdline::parser parser;
+    parser.add<string>("host", 'h', "ip/hostname of server", true, "");
+    parser.add<int>("port", 'p', "the port of node", true, 8848, cmdline::range(1, 65535));
+    parser.add<string>("username", 'u', "username", true);
+    parser.add<string>("password", 'P', "password", true);
+    parser.add<string>("file", 'f', "filename of the script to be executed", false);
+    parser.add<string>("script", 's', "the script to execute", false);
+
+    parser.parse_check(argc, argv);
+
     string host, username, password;
     int port;
     try{
-        po::store(po::parse_command_line(argc, argv, desc), vm);
-        po::notify(vm);
-        if(argc < 4 || vm.count("help")){
-                cout << desc << endl;
+        if(argc < 4 || parser.exist("help")){
+                cout << parser.usage() << endl;
             return 0;
         }
-        host = vm["host"].as<string>();
-        port = vm["port"].as<int>();
-        username =  vm["username"].as<string>();
-        password =  vm["password"].as<string>();
+        host = parser.get<string>("host");
+        port =  parser.get<int>("port");;
+        username =  parser.get<string>("username");
+        password =  parser.get<string>("password");
     }catch(exception& e){
         cout << "Parse input failed, exit." << endl;
         exit(128); 
@@ -45,15 +46,14 @@ int main(int argc, char* argv[]){
         exit(130);
     }
 
-    if(vm.count("file") && vm.count("script")){
-        cout << "Confict argument: file and script, choose either of them!" << endl;
+    if(parser.exist("file") && parser.exist("script")){
+        cout << "Ambiguous parameter: file and script, keep one of them!" << endl;
         exit(128);
-    }
-
-    if(vm.count("file")){
+    }else if (parser.exist("file"))
+    {
         FileReader f;
         try{
-            string script = f.read(vm["file"].as<string>());
+            string script = f.read(parser.get<string>("filename"));
             dolphindb::ConstantSP result = client.runNonInteractive(script);
             cout << result -> getString() << endl;
             return 0;
@@ -61,10 +61,8 @@ int main(int argc, char* argv[]){
             cout << "run command failed: " << e.what() << '\n';
             exit(140);
         }
-    }
-
-    if(vm.count("script")){
-        string script = vm["script"].as<string>();
+    }else if(parser.exist("script")){
+        string script = parser.get<string>("script");
         try{
             dolphindb::ConstantSP result = client.runNonInteractive(script);
             cout << result -> getString() << endl;
@@ -96,8 +94,9 @@ int main(int argc, char* argv[]){
             }
         }
     }
-
-    client.close();
+    {
+        client.close();
+    }
     return 0;
 }
 
@@ -107,7 +106,7 @@ void showPrompt(){
 
 void showBanner(){
     std::string banner = R"(
-============================================================
+-----------------------------------------------------------
   _____          _         _      _         _____   ____  
  |  __ \        | |       | |    (_)       |  __ \ |  _ \ 
  | |  | |  ___  | | _ __  | |__   _  _ __  | |  | || |_) |
@@ -119,8 +118,9 @@ void showBanner(){
 
 official website: https://www.dolphindb.com/
 github: https://github.com/dolphindb
-support email：support@dolphindb.com        
-============================================================
+support email: support@dolphindb.com
+
+-----------------------------------------------------------
 )";
     std::cout << banner << std::endl;
 }

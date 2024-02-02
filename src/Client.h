@@ -1,6 +1,7 @@
 #include <string>
 #include "DolphinDB.h"
 #include "Util.h"
+#include "CommandHistory.h"
 
 class Client
 {
@@ -8,6 +9,7 @@ class Client
         bool isInactive_;
         bool connected_;
         dolphindb::DBConnection conn_;
+        CommandHistory history;
 
     public:
         Client():connected_(false),isInactive_(true){};
@@ -20,6 +22,7 @@ class Client
             return connected_;
         };
         void close(){
+            this -> history.store();
             conn_.close();
         }
 };

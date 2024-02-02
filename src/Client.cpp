@@ -3,6 +3,7 @@
 #include "Util.h"
 #include "Client.h"
 
+
 bool Client::connect(string host, int port, string username, string password){
       bool isConnect = this -> conn_.connect(host, port, username, password);
       this -> connected_ = isConnect;
@@ -11,6 +12,8 @@ bool Client::connect(string host, int port, string username, string password){
 
 void Client::runInteractive(string cmd){
       dolphindb::ConstantSP result =  this -> conn_.run(cmd);
+      this -> history.add(cmd);
+
       string fmtResult = result -> getString();
       if(fmtResult.length() == 0){
             return;

@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "ubuntu",
             "includePath": [
                 "${workspaceFolder}/**"
             ],
@@ -12,7 +12,7 @@
             ],
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
-            "cppStandard": "gnu++14",
+            "cppStandard": "c++11",
             "intelliSenseMode": "windows-gcc-x64",
             "configurationProvider": "ms-vscode.cmake-tools"
         }
