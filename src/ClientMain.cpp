@@ -3,14 +3,15 @@
 #include "FileReader.h"
 #include "DolphinDB.h"
 #include "cmdline.h"
-
+#include "readline/readline.h"
+#include "readline/history.h"
 
 const std::string VERSION = "0.1.1";
 
 inline void showPrompt();
 void showBanner();
 
-//TODO parse args by cmdline
+
 int main(int argc, char* argv[]){
     using namespace std;
 
@@ -76,15 +77,17 @@ int main(int argc, char* argv[]){
     if(client.isInteractiveMode()){
         showBanner();
         cout << "Welcome to DolphinDB ";
-        client.runInteractive("version()");    
+        client.runInteractive("version()");
+        vector<string> keyWords;
+        client.getKeyWords(keyWords);
+        
         while(true){
-            showPrompt();
-            string cmd;
-            getline(cin, cmd);
-            if(cmd == "q" || cmd == "quit"){
-                cout << "Bye." << endl;
-                break;
+            char* line = readline("> ");
+            if(*line){
+                add_history(line);
             }
+            unique_ptr<char> pLine(line);
+            string cmd(line);
             try
             {
                 client.runInteractive(cmd);

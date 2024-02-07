@@ -15,7 +15,7 @@ if(UNIX)
 	include_directories(include)
 	include_directories(include/dolphindb)
 	link_directories(${PROJECT_SOURCE_DIR}/lib)
-	link_libraries(${DDBAPI})
+	link_libraries(${DDBAPI} readline history ncurses)
 
 	add_executable(ddbclient ${SOURCES})
 	target_link_libraries(ddbclient pthread rt dl) 
