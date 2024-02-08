@@ -28,17 +28,15 @@ dolphindb::ConstantSP Client::runNonInteractive(string cmd){
       return this -> conn_.run(cmd);
 }
 
-std::vector<std::string> Client::getKeyWords(std::vector<std::string> & words){
+void Client::getKeyWords(std::vector<std::string> & words){
       std::string sql = R"(
-            select name 
-            from defs() 
-            where strlen(name) >= 3 
-            and regexFind(name, "^[a-zA-Z0-9]+") >= 0
-            and userDefined = false)";
+      select name 
+      from defs() 
+      where strlen(name) >= 3 and regexFind(name, "^[a-zA-Z0-9]+") >= 0 and userDefined = false
+      order by name)";
 
       auto rst = this -> conn_.run(sql);
       dolphindb::VectorSP vp = rst->getColumn(0);
-      std::vector<std::string> allKeyWords;
       for(int i = 0; i < vp ->size(); ++i){
             words.emplace_back(vp->getString(i));
       }

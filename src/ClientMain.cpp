@@ -5,6 +5,8 @@
 #include "cmdline.h"
 #include "readline/readline.h"
 #include "readline/history.h"
+#include <pwd.h>
+#include <unistd.h> 
 
 const std::string VERSION = "0.1.1";
 
@@ -59,7 +61,7 @@ int main(int argc, char* argv[]){
             cout << result -> getString() << endl;
             return 0;
         }catch(exception& e){
-            cout << "run command failed: " << e.what() << '\n';
+            cout << "ERROR " << e.what() << '\n';
             exit(140);
         }
     }else if(parser.exist("script")){
@@ -69,7 +71,7 @@ int main(int argc, char* argv[]){
             cout << result -> getString() << endl;
             return 0;
         }catch(exception& e){
-            cout << "run command failed: " << e.what() << '\n';
+            cout << "ERROR " << e.what() << '\n';
             exit(140);
         }
     }
@@ -78,6 +80,10 @@ int main(int argc, char* argv[]){
         showBanner();
         cout << "Welcome to DolphinDB ";
         client.runInteractive("version()");
+        struct passwd *pw = getpwuid(geteuid());
+        string historyFile = string(pw -> pw_dir) + string("/.ddbclient_history");
+        //just read last 100 command history
+        read_history_range (historyFile.c_str(), 0, 99);
         vector<string> keyWords;
         client.getKeyWords(keyWords);
         
@@ -88,12 +94,19 @@ int main(int argc, char* argv[]){
             }
             unique_ptr<char> pLine(line);
             string cmd(line);
+
+            if(cmd == "quit"){
+                write_history(historyFile.c_str());
+                cout << "Bye." << endl;
+                break;
+            }
+
             try
             {
                 client.runInteractive(cmd);
             }catch(exception& e)
             {
-                cout << "run command failed: " << e.what() << '\n';
+                cout << "ERROR " << e.what() << '\n';
             }
         }
     }

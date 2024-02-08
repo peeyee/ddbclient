@@ -25,5 +25,5 @@ class Client
             this -> history.store();
             conn_.close();
         }
-        std::vector<std::string> getKeyWords(std::vector<std::string> & words);
+        void getKeyWords(std::vector<std::string> & words);
 };
