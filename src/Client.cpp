@@ -2,7 +2,7 @@
 #include "DolphinDB.h"
 #include "Util.h"
 #include "Client.h"
-
+namespace cli{
 
 bool Client::connect(string host, int port, string username, string password){
       bool isConnect = this -> conn_.connect(host, port, username, password);
@@ -41,3 +41,5 @@ void Client::getKeyWords(std::vector<std::string> & words){
             words.emplace_back(vp->getString(i));
       }
 };
+
+}

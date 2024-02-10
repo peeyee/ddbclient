@@ -14,13 +14,14 @@ inline void showPrompt();
 void showBanner();
 char** myCompletion(const char *text, int start, int end);
 char * command_generator(const char *text, int state);
+char * dupstr (const char* s);
 
-char** keyWords;
+vector<string> keyWords;
 
 
 int main(int argc, char* argv[]){
     using namespace std;
-
+    using namespace cli;
     cmdline::parser parser;
     parser.add<string>("host", 'h', "ip/hostname of server", true, "");
     parser.add<int>("port", 'p', "the port of node", true, 8848, cmdline::range(1, 65535));
@@ -60,7 +61,7 @@ int main(int argc, char* argv[]){
     {
         FileReader f;
         try{
-            string script = f.read(parser.get<string>("filename"));
+            string script = f.read(parser.get<string>("file"));
             dolphindb::ConstantSP result = client.runNonInteractive(script);
             cout << result -> getString() << endl;
             return 0;
@@ -89,13 +90,14 @@ int main(int argc, char* argv[]){
         rl_attempted_completion_function = myCompletion;
         //just read last 100 command history
         read_history_range (historyFile.c_str(), 0, 99);
-        vector<string> keyWords;
         client.getKeyWords(keyWords);
         
         while(true){
             char* line = readline("> ");
-            if(*line){
+            if(line != nullptr && *line){
                 add_history(line);
+            }else{
+                break;
             }
             unique_ptr<char> pLine(line);
             string cmd(line);
@@ -163,7 +165,7 @@ char** myCompletion(const char *text, int start, int end){
     
 char * command_generator(const char *text, int state){
   static int list_index, len;
-  char *name;
+  const char *name;
 
   /* If this is a new word to complete, initialize now.  This includes
      saving the length of TEXT for efficiency, and initializing the index
@@ -175,7 +177,7 @@ char * command_generator(const char *text, int state){
     }
 
   /* Return the next name which partially matches from the command list. */
-  while (name = keyWords[list_index])
+  while (list_index < keyWords.size() && (name = keyWords.at(list_index).c_str()))
     {
       list_index++;
 
@@ -185,4 +187,13 @@ char * command_generator(const char *text, int state){
 
   /* If no names matched, then return NULL. */
   return ((char *)NULL);
+}
+
+
+char * dupstr (const char* s)
+{
+  void * ptr =  malloc(strlen (s) + 1);
+  char * r = static_cast<char*>(ptr);
+  strcpy (r, s);
+  return (r);
 }

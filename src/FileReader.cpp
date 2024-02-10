@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>  
 #include "FileReader.h"
+namespace cli {
 
 std::string FileReader::read(std::string filename){
     std::ifstream fin(filename);
@@ -16,3 +17,5 @@ std::string FileReader::read(std::string filename){
     }
     return content_;
 };
+
+}

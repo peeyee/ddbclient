@@ -1,6 +1,7 @@
 #include "CommandHistory.h"
 #include <pwd.h>
 #include <unistd.h> 
+namespace cli{
 
 CommandHistory::CommandHistory()
 {
@@ -58,4 +59,6 @@ bool CommandHistory::store(){
     }else{
         return false;
     }
+}
+
 }

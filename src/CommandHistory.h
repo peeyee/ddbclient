@@ -12,7 +12,7 @@
  *  where most recently command is NO100
  * 
 */
-
+namespace cli{
 class CommandHistory
 {
 
@@ -33,4 +33,4 @@ public:
     bool store();
 };
 
-
+}

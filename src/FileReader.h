@@ -1,5 +1,5 @@
 #include <iostream>
-
+namespace cli{
 class FileReader{
     public:
         std::string read(std::string filename);
@@ -11,3 +11,5 @@ class FileReader{
 
 
 };
+
+}

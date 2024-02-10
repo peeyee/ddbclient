@@ -2,7 +2,7 @@
 #include "DolphinDB.h"
 #include "Util.h"
 #include "CommandHistory.h"
-
+namespace cli{
 class Client
 {
     private:
@@ -27,3 +27,4 @@ class Client
         }
         void getKeyWords(std::vector<std::string> & words);
 };
+}
