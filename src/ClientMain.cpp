@@ -15,6 +15,7 @@ void showBanner();
 char** myCompletion(const char *text, int start, int end);
 char * command_generator(const char *text, int state);
 char * dupstr (const char* s);
+bool endsWith(const std::string& str, const std::string& suffix);
 
 vector<string> keyWords;
 
@@ -84,37 +85,62 @@ int main(int argc, char* argv[]){
     if(client.isInteractiveMode()){
         showBanner();
         cout << "Welcome to DolphinDB ";
-        client.runInteractive("version()");
+        dolphindb::ConstantSP v = client.runNonInteractive("version()");
+        cout << v->getString() << endl << endl;
         struct passwd *pw = getpwuid(geteuid());
         string historyFile = string(pw -> pw_dir) + string("/.ddbclient_history");
         rl_attempted_completion_function = myCompletion;
         //just read last 100 command history
         read_history_range (historyFile.c_str(), 0, 99);
         client.getKeyWords(keyWords);
-        
+        string cmd;
+        bool isMultiLine = false;
+
         while(true){
-            char* line = readline("> ");
+            char* line = readline("cli> ");
+            string lineStr;
+            //process EOF
             if(line != nullptr && *line){
                 add_history(line);
             }else{
-                break;
+                continue;
             }
             unique_ptr<char> pLine(line);
-            string cmd(line);
+            lineStr = string(line);
 
-            if(cmd == "quit"){
+            if(lineStr == "quit"){
                 write_history(historyFile.c_str());
                 cout << "Bye." << endl;
                 break;
             }
 
+            bool endWithBackslash = endsWith(lineStr, "\\") ? true : false;
+
+            if (isMultiLine && endWithBackslash)
+            {
+                string validStr = lineStr.substr(0, lineStr.length() - 1);
+                cmd += validStr;
+                continue;
+            }else if(isMultiLine && !endWithBackslash){
+                cmd += lineStr;
+            }else if(!isMultiLine && endWithBackslash){
+                isMultiLine = true;
+                cmd = lineStr.substr(0, lineStr.length() - 1);
+                continue;
+            }else{
+                cmd = lineStr;
+            }
+
             try
             {
                 client.runInteractive(cmd);
-            }catch(exception& e)
-            {
-                cout << "ERROR " << e.what() << '\n';
             }
+            catch(const std::exception& e)
+            {
+                cout << "ERROR: " << e.what() << endl << endl;
+            }
+            isMultiLine = false;
+            cmd = "";
         }
     }
     {
@@ -146,6 +172,7 @@ support email: support@dolphindb.com
 -----------------------------------------------------------
 )";
     std::cout << banner << std::endl;
+    std::cout << "Ddbclient version " << VERSION << std::endl;
 }
 
 char** myCompletion(const char *text, int start, int end){
@@ -197,3 +224,10 @@ char * dupstr (const char* s)
   strcpy (r, s);
   return (r);
 }
+
+bool endsWith(const std::string& str, const std::string& suffix) {  
+    if (str.size() < suffix.size()) {  
+        return false;  
+    }  
+    return str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;  
+}  
