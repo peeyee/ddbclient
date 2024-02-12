@@ -1,5 +1,6 @@
 # ddbclient
-A terminal that supports connecting to DolphinDB >= 1.30.21, 2.00.9.By now, It supports the following operating system.
+A terminal that supports connecting to DolphinDB >= 1.30.21, 2.00.9. 
+By now, It supports the following operating system.
 
 |OS|Version|
 | ------ | ----- |
@@ -11,23 +12,23 @@ A terminal that supports connecting to DolphinDB >= 1.30.21, 2.00.9.By now, It s
 
 ### 1.1 binary install
 ```shell
-tar -zxvf ddbclient-0.1.0-Linux.tar.gz
+tar -zxvf ddbclient-0.2.0-Linux.tar.gz
 ```
 ### 1.2 centos
 ```
-rpm -ivh ddbclient-0.1.0-Linux.tar.gz
+rpm -ivh ddbclient-0.2.0-Linux.tar.gz
 ```
 ### 1.3 ubuntu
 ```
-dpkg -i ddbclient-0.1.0-Linux.deb
+dpkg -i ddbclient-0.2.0-Linux.deb
 ```
 Ddbclient will be copied to /usr/local/bin and configure the environment variables.
 
-### 1.2 build by source
+### 1.4 build by source
 Clone this project, and use cmake to build it. Currently, it only supports linux.
 ```shell
 git clone https://github.com/peeyee/ddbclient
-git checkout 0.1.0
+git checkout 0.2.0
 cmake -B build -DCMAKE_BUILD_TYPE=release -S .
 cd build/ && make
 sudo make install
@@ -40,23 +41,38 @@ cd ~ && vi .bashrc
 export PATH="$PATH:$HOME/bin:/usr/local/bin" #add this to .bashrc
 source .bashrc
 ```
+### 1.5 Package
+Use cpack to get a appropriate package according to your OS. 
+
+```shell
+# rpm
+cpack -G RPM
+
+# deb
+cpack -G DEB 
+
+# tar.gz
+cpack -G TGZ 
+```
+
 
 ## 2 basic usage
 Run `ddbclient` to get a brief mannual.
 ```
 (base) peter@DESKTOP-1OB2067:~$ ddbclient
-DolphinDB client 0.1.alpha:
-  --help                show help message
-  -h [ --host ] arg     the ip/hostname connect to
-  -p [ --port ] arg     the port of DolphinDB node
-  -u [ --username ] arg username
-  --password arg        password
-  -f [ --file ] arg     read script from a file
-  -s [ --script ] arg   the script to run
+usage: ./ddbclient --host=string --port=int --username=string --password=string [options] ... 
+options:
+  -h, --host        ip/hostname of server (string)
+  -p, --port        the port of node (int)
+  -u, --username    username (string)
+  -P, --password    password (string)
+  -f, --file        filename of the script to be executed (string [=])
+  -s, --script      the script to execute (string [=])
+  -?, --help        print this message
 ```
 ### 2.1 activeMode
 Without -f or -s options, it is considered as active mode, which you can
-send script to server and watch the result and continue doing this. The result may be formatted to make it more readable. Set the basic options to connect to dolphindb.
+send script to server and watch the result and continue doing this. The result may be formatted to make it more readable. Set the basic options to connect to DolphinDB.
 ``` shell
 (base) peter@DESKTOP-1OB2067:~$ ddbclient -h localhost -p 8848 -u admin --password 123456
 ============================================================
@@ -74,25 +90,68 @@ github: https://github.com/dolphindb
 support email：support@dolphindb.com
 ============================================================
 
+Ddbclient version 0.2.0
 Welcome to DolphinDB 2.00.9.7 2023.06.08
->  
+
+cli>  
 ```
 Input your command.
 ```shell
->  now()
-2023.07.23T20:02:02.372
->  1..10
+cli>  now()
+2024.02.11T21:01:25.494
+OK. Elapsed: 0.000 sec.
+
+cli>  1..10
 [1,2,3,4,5,6,7,8,9,10]
->  version()
-2.00.9.7 2023.06.08
->  print("hello world!")
+OK. Elapsed: 0.000 sec.
+
+cli> print("hello world!")
 hello world!
+
+OK. Elapsed: 0.000 sec.
 ```
-Use **q** or **quit** to exit the terminal.
+Use **quit** to exit the terminal.
 ```shell
->  q
+cli>  quit
 Bye.
 ```
+
+
+From this version, command history,auto completion, multiline input are supported.
+
+* command history
+
+Use up/down arrow to search for command history. Use the **↑** to find the previous command and **↓** for next command.
+
+* auto completion
+
+Enter a little words, use **TAB** to get a non-ambiguous compeltion. Or double-click the tab key to list available candidate.
+
+```shell
+cli> get #TAB TAB
+Display all 169 possibilities? (y or n) #y
+getActiveCID                         getDBIdByTabletChunk                 getMarketCalendar                    getSmallFileBucketMeta
+getActiveMaster                      getDFSDatabases
+```
+
+* multiline input
+
+To make your input more readable, you can use multiline input. Each line that ends with a "\\" is recognized as multiline input. Client will wait until the command is finished.
+
+```
+cli> select \
+cli> * \
+cli> from t1
+timestamp sym qty  price 
+--------- --- ---- ------
+09:34:07  C   2200 49.6  
+09:36:42  MS  1900 29.46 
+......
+09:38:12  C   8800 51.29 
+
+OK. Elapsed: 0.000 sec.
+```
+
 
 ### 2.2 inActiveMode
 * s, script
