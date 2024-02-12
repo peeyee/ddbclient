@@ -1,5 +1,5 @@
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB SOURCES "*.cpp")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -9,7 +9,7 @@ else()
 endif()
 
 if(UNIX)
-	add_definitions(-DLINUX -D_GLIBCXX_USE_CXX11_ABI=1)
+	add_definitions(-DLINUX -D_GLIBCXX_USE_CXX11_ABI=0)
 
 	set(DDBAPI libDDBAPI.a) 
 	include_directories(include)
@@ -19,4 +19,6 @@ if(UNIX)
 
 	add_executable(ddbclient ${SOURCES})
 	target_link_libraries(ddbclient pthread rt dl) 
+
+        install(TARGETS ddbclient DESTINATION bin)
 endif()

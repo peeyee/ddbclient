@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 project(ddbclient)
 add_subdirectory(src bin)
 
 set(CMAKE_INSTALL_PREFIX "/usr/local/")
-install(TARGETS ddbclient DESTINATION bin)
 
 set(CPACK_PACKAGE_NAME ${project})
 set(CPACK_SET_DESTDIR ON)
