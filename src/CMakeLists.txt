@@ -1,5 +1,7 @@
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
 file(GLOB SOURCES "*.cpp")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -20,5 +22,5 @@ if(UNIX)
 	add_executable(ddbclient ${SOURCES})
 	target_link_libraries(ddbclient pthread rt dl) 
 
-        install(TARGETS ddbclient DESTINATION bin)
+    install(TARGETS ddbclient DESTINATION bin)
 endif()
