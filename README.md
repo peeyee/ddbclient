@@ -41,6 +41,40 @@ cd ~ && vi .bashrc
 export PATH="$PATH:$HOME/bin:/usr/local/bin" #add this to .bashrc
 source .bashrc
 ```
+
+* Q & A
+---
+
+**Q**: error: Failed dependencies:
+        libgcc_s.so.1(GCC_7.0.0)(64bit) is needed by ddbclient-0.2.0-1.x86_64
+
+**A**: install gcc
+```shell
+sudo apt-get update 
+sudo apt install -y gcc
+```
+
+---
+
+**Q**: bash: cmake: command not found
+
+**A**: install cmake
+```shell
+sudo apt-get update 
+sudo apt-get install cmake=3.1*
+```
+---
+
+
+**Q**: CMake Error at CMakeLists.txt:2 (project):
+  No CMAKE_CXX_COMPILER could be found.
+
+**A**: install g++
+```shell
+sudo apt-get update  
+sudo apt-get install g++
+```
+
 ### 1.5 Package
 Use cpack to get a appropriate package according to your OS. 
 
