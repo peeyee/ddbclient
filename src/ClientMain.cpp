@@ -133,7 +133,16 @@ int main(int argc, char* argv[]){
 
             try
             {
-                client.runInteractive(cmd);
+                if(cmd[0] == '!'){
+                    std::string shellCmd = cmd.substr(1, cmd.size() - 1);
+                    int hasError = client.runShell(shellCmd);
+                    if(hasError){
+                        cout << "[" +  cmd + "] execute failed." << endl << endl;
+                    }
+                    cout << endl;
+                }else{
+                    client.runInteractive(cmd);
+                }
             }
             catch(const std::exception& e)
             {
@@ -165,14 +174,12 @@ void showBanner(){
                    | |                                    
                    |_|                            
 
-official website: https://www.dolphindb.com/
-github: https://github.com/dolphindb
-support email: support@dolphindb.com
 
 -----------------------------------------------------------
 )";
     std::cout << banner << std::endl;
     std::cout << "Ddbclient version " << VERSION << std::endl;
+    std::cout << "Github: https://github.com/peeyee/ddbclient.git" << std::endl << std::endl;
 }
 
 char** myCompletion(const char *text, int start, int end){
