@@ -13,6 +13,8 @@ namespace cli{
 
         public:
             Client():connected_(false),isInactive_(true){};
+            Client(bool useSSL):connected_(false),isInactive_(true),conn_(dolphindb::DBConnection(useSSL, false, 300, false)){
+            }
             ~Client(){};
             void runInteractive(std::string cmd); 
             bool isInteractiveMode(){ return isInactive_; };

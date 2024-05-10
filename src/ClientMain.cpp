@@ -25,16 +25,18 @@ int main(int argc, char* argv[]){
     using namespace cli;
     cmdline::parser parser;
     parser.add<string>("host", 'h', "ip/hostname of server", true, "");
-    parser.add<int>("port", 'p', "the port of node", true, 8848, cmdline::range(1, 65535));
+    parser.add<int>("port", 'p', "the port of node", false, 8848, cmdline::range(1, 65535));
     parser.add<string>("username", 'u', "username", true);
     parser.add<string>("password", 'P', "password", true);
     parser.add<string>("file", 'f', "filename of the script to be executed", false);
     parser.add<string>("script", 's', "the script to execute", false);
+    parser.add("secure", '\0', "use SSL connection");
 
     parser.parse_check(argc, argv);
 
     string host, username, password;
     int port;
+    bool useSSL = false;
     try{
         if(argc < 4 || parser.exist("help")){
                 cout << parser.usage() << endl;
@@ -44,11 +46,15 @@ int main(int argc, char* argv[]){
         port =  parser.get<int>("port");;
         username =  parser.get<string>("username");
         password =  parser.get<string>("password");
+        if(parser.exist("secure")){
+            useSSL = true;
+        }
     }catch(exception& e){
         cout << "Parse input failed, exit." << endl;
         exit(128); 
     }    
-    Client client;
+   
+    Client client(useSSL); 
     client.connect(host, port, username, password);
     if(!client.isConnected()){
         cout << "Failed connect to DolphinDB " + host + ":" + to_string(port) << endl;
