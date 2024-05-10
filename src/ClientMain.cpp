@@ -8,7 +8,7 @@
 #include <pwd.h>
 #include <unistd.h> 
 
-const std::string VERSION = "0.2.0";
+const std::string VERSION = "0.3.0";
 
 inline void showPrompt();
 void showBanner();
