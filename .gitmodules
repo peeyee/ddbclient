@@ -1,0 +1,6 @@
+[submodule "thirdparty/linenoise-ng"]
+	path = thirdparty/linenoise-ng
+	url = https://github.com/qingqibing/linenoise-ng.git
+[submodule "thirdparty/api-cpp"]
+	path = thirdparty/api-cpp
+	url = https://github.com/dolphindb/api-cplusplus.git

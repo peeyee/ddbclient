@@ -3,7 +3,8 @@
         {
             "name": "ubuntu",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/thirdparty/linenoise-ng/**"
             ],
             "defines": [
                 "_DEBUG",

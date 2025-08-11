@@ -1,28 +1,32 @@
 #include <iostream>
+#include <string>
 #include "Client.h"
 #include "FileReader.h"
 #include "DolphinDB.h"
 #include "cmdline.h"
-#include "readline/readline.h"
-#include "readline/history.h"
+#include "linenoise.h"
 #include <pwd.h>
 #include <unistd.h> 
 
-const std::string VERSION = "0.3.0";
+const std::string VERSION = "0.4.0";
 
-inline void showPrompt();
-void showBanner();
-char** myCompletion(const char *text, int start, int end);
-char * command_generator(const char *text, int state);
-char * dupstr (const char* s);
+inline static void showPrompt(); 
+static void showBanner();
+void completionHook(const char* input, linenoiseCompletions* lc);
 bool endsWith(const std::string& str, const std::string& suffix);
 
-vector<string> keyWords;
+static std::vector<std::string> keyWords;
 
 
 int main(int argc, char* argv[]){
     using namespace std;
     using namespace cli;
+    
+    linenoiseSetCompletionCallback(completionHook);
+    struct passwd *pw = getpwuid(geteuid());
+    string historyFile = string(pw -> pw_dir) + string("/.ddbclient_history");
+    linenoiseHistoryLoad(historyFile.c_str());
+
     cmdline::parser parser;
     parser.add<string>("host", 'h', "ip/hostname of server", true, "");
     parser.add<int>("port", 'p', "the port of node", false, 8848, cmdline::range(1, 65535));
@@ -90,24 +94,21 @@ int main(int argc, char* argv[]){
     
     if(client.isInteractiveMode()){
         showBanner();
-        cout << "Welcome to DolphinDB ";
+        cout << "Welcome to DolphinDB " ;
         dolphindb::ConstantSP v = client.runNonInteractive("version()");
         cout << v->getString() << endl << endl;
-        struct passwd *pw = getpwuid(geteuid());
-        string historyFile = string(pw -> pw_dir) + string("/.ddbclient_history");
-        rl_attempted_completion_function = myCompletion;
-        //just read last 100 command history
-        read_history_range (historyFile.c_str(), 0, 99);
+
+
         client.getKeyWords(keyWords);
         string cmd;
         bool isMultiLine = false;
 
         while(true){
-            char* line = readline("cli> ");
+            char* line = linenoise("cli> ");
             string lineStr;
             //process EOF
             if(line != nullptr && *line){
-                add_history(line);
+                linenoiseHistoryAdd(line);
             }else{
                 continue;
             }
@@ -115,7 +116,7 @@ int main(int argc, char* argv[]){
             lineStr = string(line);
 
             if(lineStr == "quit"){
-                write_history(historyFile.c_str());
+                linenoiseHistorySave(historyFile.c_str());
                 cout << "Bye." << endl;
                 break;
             }
@@ -164,11 +165,13 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
-void showPrompt(){
+static void showPrompt(){
     std::cout << ">  " ;
 }
 
-void showBanner(){
+static void showBanner(){
+    std::cout << "Ddbclient version " << VERSION << std::endl;
+    std::cout << "Github: https://github.com/peeyee/ddbclient.git" << std::endl;
     std::string banner = R"(
 -----------------------------------------------------------
   _____          _         _      _         _____   ____  
@@ -176,71 +179,28 @@ void showBanner(){
  | |  | |  ___  | | _ __  | |__   _  _ __  | |  | || |_) |
  | |  | | / _ \ | || '_ \ | '_ \ | || '_ \ | |  | ||  _ < 
  | |__| || (_) || || |_) || | | || || | | || |__| || |_) |
- |_____/  \___/ |_|| .__/ |_| |_||_||_| |_||_____/ |____/ 
+ |______/ \___/ |_|| .__/ |_| |_||_||_| |_||______/|_____/ 
                    | |                                    
                    |_|                            
-
 
 -----------------------------------------------------------
 )";
     std::cout << banner << std::endl;
-    std::cout << "Ddbclient version " << VERSION << std::endl;
-    std::cout << "Github: https://github.com/peeyee/ddbclient.git" << std::endl << std::endl;
-}
-
-char** myCompletion(const char *text, int start, int end){
- char **matches;
-
-  matches = (char **)NULL;
-
-  /* If this word is at the start of the line, then it is a command
-     to complete.  Otherwise it is the name of a file in the current
-     directory. */
-  if (start == 0)
-    matches = rl_completion_matches (text, command_generator);
-
-  return (matches);
-}
-
-    
-char * command_generator(const char *text, int state){
-  static int list_index, len;
-  const char *name;
-
-  /* If this is a new word to complete, initialize now.  This includes
-     saving the length of TEXT for efficiency, and initializing the index
-     variable to 0. */
-  if (!state)
-    {
-      list_index = 0;
-      len = strlen (text);
-    }
-
-  /* Return the next name which partially matches from the command list. */
-  while (list_index < keyWords.size() && (name = keyWords.at(list_index).c_str()))
-    {
-      list_index++;
-
-      if (strncmp (name, text, len) == 0)
-        return (dupstr(name));
-    }
-
-  /* If no names matched, then return NULL. */
-  return ((char *)NULL);
-}
-
-
-char * dupstr (const char* s)
-{
-  void * ptr =  malloc(strlen (s) + 1);
-  char * r = static_cast<char*>(ptr);
-  strcpy (r, s);
-  return (r);
 }
 
 bool endsWith(const std::string& str, const std::string& suffix) {  
-    if (str.size() < suffix.size()) {  
-        return false;  
-    }  
-    return str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;  
-}  
+   if (str.size() < suffix.size()) {  
+       return false;  
+   }  
+   return str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;  
+} 
+
+
+void completionHook(const char* input, linenoiseCompletions* lc) {
+    std::string currentInput(input);  
+    for (const auto& func : keyWords) {
+        if (func.find(currentInput) == 0) {
+            linenoiseAddCompletion(lc, func.c_str());
+        }
+    }
+}

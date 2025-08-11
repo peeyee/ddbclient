@@ -3,6 +3,7 @@
 #include "Util.h"
 #include "CommandHistory.h"
 namespace cli{
+    using namespace std;
     class Client
     {
         private:
@@ -19,7 +20,7 @@ namespace cli{
             void runInteractive(std::string cmd); 
             bool isInteractiveMode(){ return isInactive_; };
             dolphindb::ConstantSP runNonInteractive(std::string cmd);
-            int runShell(std::string & cmd);
+            int runShell(const std::string & cmd);
             bool connect(string host, int port, string username, string password);
             bool isConnected(){
                 return connected_;
