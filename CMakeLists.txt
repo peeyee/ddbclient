@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.1)
 project(ddbclient)
+
 include_directories(
     thirdparty/linenoise-ng/include
     thirdparty/api-cpp/include
 )
 add_compile_definitions(_GLIBCXX_USE_CXX11_ABI=0)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
 
 add_subdirectory(src bin)
 add_subdirectory(thirdparty/linenoise-ng)
 add_subdirectory(thirdparty/api-cpp)
-
+add_subdirectory(thirdparty/libuuid)
 
 
 set(CMAKE_INSTALL_PREFIX "/usr/local/")

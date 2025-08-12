@@ -4,3 +4,6 @@
 [submodule "thirdparty/api-cpp"]
 	path = thirdparty/api-cpp
 	url = https://github.com/dolphindb/api-cplusplus.git
+[submodule "thirdparty/libuuid"]
+	path = thirdparty/libuuid
+	url = https://github.com/akemimadoka/libuuid
