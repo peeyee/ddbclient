@@ -32,17 +32,22 @@ set(CMAKE_INSTALL_PREFIX "/usr/local/")
 set(CPACK_PACKAGE_NAME ${project})
 set(CPACK_SET_DESTDIR ON)
 set(CPACK_INSTALL_PREFIX "/usr/local/")
-<<<<<<< HEAD
-set(CPACK_PACKAGE_VERSION "0.3.0")
-=======
-set(CPACK_PACKAGE_VERSION "0.4.0")
->>>>>>> dev
+set(CPACK_PACKAGE_VERSION "1.0")
 set(CPACK_RPM_PACKAGE_GROUP "ddb")
 set(CPACK_PACKAGE_VENDOR "peeyee")
 set(CPACK_RPM_PACKAGE_LICENSE "Apache 2.0 + Common Clause 1.0")
 
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|ARM|aarch64|AARCH64")
+    message(STATUS "Building for ARM64 (aarch64)")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "arm64")  
+    set(CPACK_RPM_PACKAGE_ARCHITECTURE "aarch64")   
+else()
+    message(STATUS "Building for x86_64 (amd64)")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64") 
+    set(CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
+endif()
+
 set(CPACK_GENERATOR "DEB")
-set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 set(CPACK_PACKAGE_CONTACT "yeyoung0909@163.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "peeyee")
 
