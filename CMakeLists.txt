@@ -4,14 +4,26 @@ project(ddbclient)
 include_directories(
     thirdparty/linenoise-ng/include
     thirdparty/api-cpp/include
+    thirdparty/libuuid
 )
 add_compile_definitions(_GLIBCXX_USE_CXX11_ABI=0)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
+
+set(ORIGINAL_C_FLAGS "${CMAKE_C_FLAGS}")
+set(ORIGINAL_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|ARM|aarch64|AARCH64")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsigned-char")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsigned-char")
+endif()
+
+add_subdirectory(thirdparty/api-cpp)
+
+set(CMAKE_C_FLAGS "${ORIGINAL_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${ORIGINAL_CXX_FLAGS}")
+
 
 add_subdirectory(src bin)
 add_subdirectory(thirdparty/linenoise-ng)
-add_subdirectory(thirdparty/api-cpp)
 add_subdirectory(thirdparty/libuuid)
 
 

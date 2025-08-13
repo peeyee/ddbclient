@@ -5,6 +5,7 @@
 #include "DolphinDB.h"
 #include "cmdline.h"
 #include "linenoise.h"
+#include "StringUtil.h"
 #include <pwd.h>
 #include <unistd.h> 
 
@@ -13,7 +14,6 @@ const std::string VERSION = "0.4.0";
 inline static void showPrompt(); 
 static void showBanner();
 void completionHook(const char* input, linenoiseCompletions* lc);
-bool endsWith(const std::string& str, const std::string& suffix);
 
 static std::vector<std::string> keyWords;
 
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]){
                 break;
             }
 
-            bool endWithBackslash = endsWith(lineStr, "\\") ? true : false;
+            bool endWithBackslash = StringUtil::endsWith(lineStr, "\\") ? true : false;
 
             if (isMultiLine && endWithBackslash)
             {
@@ -188,16 +188,16 @@ static void showBanner(){
     std::cout << banner << std::endl;
 }
 
-bool endsWith(const std::string& str, const std::string& suffix) {  
-   if (str.size() < suffix.size()) {  
-       return false;  
-   }  
-   return str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;  
-} 
 
 
 void completionHook(const char* input, linenoiseCompletions* lc) {
     std::string currentInput(input);  
+    
+    if(cli::StringUtil::contains(currentInput, ".")){
+        size_t i = currentInput.find_last_of(".");
+        currentInput = currentInput.substr(i+1);
+    }
+
     for (const auto& func : keyWords) {
         if (func.find(currentInput) == 0) {
             linenoiseAddCompletion(lc, func.c_str());

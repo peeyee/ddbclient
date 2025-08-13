@@ -1,5 +1,14 @@
 # ddbclient
-A terminal that supports connecting to DolphinDB >= 1.30.21, 2.00.9. 
+A terminal that supports connecting to DolphinDB >= 1.30.21, 2.00.9. It's designed to be nearly zero-dependency.
+Ddbclient is very convenient, has the following features :
+* command history
+* auto completion
+* active and inactive mode
+* execute shell
+* multi-line input
+* support for ARM
+
+
 By now, It supports the following operating system.
 
 |OS|Version|
@@ -12,15 +21,15 @@ By now, It supports the following operating system.
 
 ### 1.1 binary install
 ```shell
-tar -zxvf ddbclient-0.2.0-Linux.tar.gz
+tar -zxvf ddbclient-v1.0-Linux.tar.gz
 ```
 ### 1.2 centos
 ```
-rpm -ivh ddbclient-0.2.0-Linux.tar.gz
+rpm -ivh ddbclient-v1.0-Linux.tar.gz
 ```
 ### 1.3 ubuntu
 ```
-dpkg -i ddbclient-0.2.0-Linux.deb
+dpkg -i ddbclient-v1.0-Linux.deb
 ```
 Ddbclient will be copied to /usr/local/bin and configure the environment variables.
 
@@ -28,7 +37,7 @@ Ddbclient will be copied to /usr/local/bin and configure the environment variabl
 Clone this project, and use cmake to build it. Currently, it only supports linux.
 ```shell
 git clone https://github.com/peeyee/ddbclient
-git checkout 0.2.0
+git checkout v1.0
 cmake -B build -DCMAKE_BUILD_TYPE=release -S .
 cd build/ && make
 sudo make install
@@ -162,15 +171,21 @@ Use up/down arrow to search for command history. Use the **↑** to find the pre
 Enter a little words, use **TAB** to get a non-ambiguous compeltion. Or double-click the tab key to list available candidate.
 
 ```shell
+cli> a.msu
+msum      msum2     msumTopN
+```
+
+
+```shell
 cli> get #TAB TAB
 Display all 169 possibilities? (y or n) #y
 getActiveCID                         getDBIdByTabletChunk                 getMarketCalendar                    getSmallFileBucketMeta
 getActiveMaster                      getDFSDatabases
 ```
 
-* multiline input
+* multi-line input
 
-To make your input more readable, you can use multiline input. Each line that ends with a "\\" is recognized as multiline input. Client will wait until the command is finished.
+To make your input more readable, use multi-line input. Each line that ends with a "\\" is recognized as multi-line input. Client will wait until the command is finished.
 
 ```
 cli> select \
@@ -185,6 +200,16 @@ timestamp sym qty  price
 
 OK. Elapsed: 0.000 sec.
 ```
+
+* execute shell
+
+When input is started with a !, it's identified  as a shell command.
+
+```shell
+cli> !pwd
+/home/peter/cppProjects/ddbclient/build
+```
+You can use `!clear` to clean the screen.
 
 
 ### 2.2 inActiveMode
