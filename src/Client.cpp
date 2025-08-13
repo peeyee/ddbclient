@@ -1,12 +1,11 @@
 #include <string>
-#include "DolphinDB.h"
-#include "Util.h"
-#include "Client.h"
 #include <chrono>
 #include <iomanip>
 #include <stdlib.h>
+#include "DolphinDB.h"
+#include "Client.h"
 namespace cli{
-
+      using namespace std;
       bool Client::connect(string host, int port, string username, string password){
             bool isConnect = this -> conn_.connect(host, port, username, password);
             this -> connected_ = isConnect;
@@ -33,7 +32,7 @@ namespace cli{
             std::string sql = R"(
             select name 
             from defs() 
-            where strlen(name) >= 3 and regexFind(name, "^[a-zA-Z0-9]+") >= 0 and userDefined = false
+            where strlen(name) >= 3 and regexFind(name, "^[a-zA-Z0-9]+") >= 0
             order by name)";
 
             auto rst = this -> conn_.run(sql);
@@ -43,7 +42,7 @@ namespace cli{
             }
       };
 
-      int Client::runShell(std::string& cmd){
+      int Client::runShell(const std::string& cmd){
             int errcode = std::system(cmd.c_str());
             return errcode;
       }

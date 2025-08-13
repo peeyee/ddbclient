@@ -77,7 +77,8 @@
         "forward_list": "cpp",
         "numbers": "cpp",
         "semaphore": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "charconv": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
