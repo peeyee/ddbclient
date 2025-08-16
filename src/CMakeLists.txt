@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB SOURCES "*.cpp")
 
 if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Release") 
-else()
 	set(CMAKE_BUILD_TYPE "Debug")  
 endif()
 
@@ -35,7 +33,7 @@ if(UNIX)
     endif()
 	add_executable(ddbclient ${SOURCES})
 	target_link_libraries(ddbclient ${CLIENT_LIBS} 
-		fmt
+		fmt::fmt
 		pthread 
 		rt 
 		dl 
