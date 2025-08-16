@@ -9,7 +9,7 @@
 #include <pwd.h>
 #include <unistd.h> 
 
-const std::string VERSION = "0.4.0";
+const static std::string VERSION = "1.0";
 
 inline static void showPrompt(); 
 static void showBanner();
