@@ -7,3 +7,6 @@
 [submodule "thirdparty/libuuid"]
 	path = thirdparty/libuuid
 	url = https://github.com/akemimadoka/libuuid
+[submodule "thirdparty/fmt"]
+	path = thirdparty/fmt
+	url = https://github.com/fmtlib/fmt.git

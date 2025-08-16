@@ -35,6 +35,7 @@ if(UNIX)
     endif()
 	add_executable(ddbclient ${SOURCES})
 	target_link_libraries(ddbclient ${CLIENT_LIBS} 
+		fmt
 		pthread 
 		rt 
 		dl 

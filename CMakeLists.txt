@@ -5,6 +5,7 @@ include_directories(
     thirdparty/linenoise-ng/include
     thirdparty/api-cpp/include
     thirdparty/libuuid
+    thirdparty/fmt
 )
 add_compile_definitions(_GLIBCXX_USE_CXX11_ABI=0)
 
@@ -25,7 +26,7 @@ set(CMAKE_CXX_FLAGS "${ORIGINAL_CXX_FLAGS}")
 add_subdirectory(src bin)
 add_subdirectory(thirdparty/linenoise-ng)
 add_subdirectory(thirdparty/libuuid)
-
+add_subdirectory(thirdparty/fmt)
 
 set(CMAKE_INSTALL_PREFIX "/usr/local/")
 
