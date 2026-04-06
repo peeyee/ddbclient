@@ -11,11 +11,14 @@ endif()
 option(CROSS_COMPILE_ARM "Enable cross-compilation for ARM" OFF)
 
 if(UNIX)
-	add_definitions(-DLINUX -D_GLIBCXX_USE_CXX11_ABI=0)
+	add_definitions(-DLINUX -D_GLIBCXX_USE_CXX11_ABI=0 -DLINK_SHARED_LIBS=OFF)
 	set(CLIENT_LIBS)
 	# dependence order matters, typically from left to right, but some how it reverses here
     list(APPEND CLIENT_LIBS DolphinDBAPI uuid ssl crypto)
 	include_directories(include)
+
+	# Prefer static libraries (.a) over shared libraries (.so) for project libraries
+	set(CMAKE_FIND_LIBRARY_SUFFIXES .a .so)
 
     if(CROSS_COMPILE_ARM)		
 		SET(CMAKE_SYSTEM_NAME Linux)
@@ -33,7 +36,8 @@ if(UNIX)
     endif()
 	add_executable(ddbclient ${SOURCES})
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-		target_link_options(ddbclient PRIVATE -static-libgcc)
+		# Use dynamic libgcc
+		# target_link_options(ddbclient PRIVATE -static-libgcc)
 	endif()
 	target_link_libraries(ddbclient ${CLIENT_LIBS} 
 		fmt::fmt
