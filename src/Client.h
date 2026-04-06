@@ -31,4 +31,6 @@ namespace cli{
             }
             void getKeyWords(std::vector<std::string> & words);
     };
+
+    std::string toString(dolphindb::ConstantSP result);
 }

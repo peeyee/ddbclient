@@ -32,6 +32,9 @@ if(UNIX)
 		link_directories(${PROJECT_SOURCE_DIR}/lib)
     endif()
 	add_executable(ddbclient ${SOURCES})
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+		target_link_options(ddbclient PRIVATE -static-libgcc)
+	endif()
 	target_link_libraries(ddbclient ${CLIENT_LIBS} 
 		fmt::fmt
 		pthread 

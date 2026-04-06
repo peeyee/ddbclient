@@ -9,12 +9,12 @@
 #include <pwd.h>
 #include <unistd.h> 
 
-const std::string VERSION = "0.4.0";
+const static std::string VERSION = "1.0";
 
 inline static void showPrompt(); 
 static void showBanner();
 void completionHook(const char* input, linenoiseCompletions* lc);
-
+int g_display_width = 80;
 static std::vector<std::string> keyWords;
 
 
@@ -138,6 +138,23 @@ int main(int argc, char* argv[]){
                 cmd = lineStr;
             }
 
+            if (cmd == "\\w" || cmd == "\\width") {
+                std::cout << "Current display width: " 
+                        << (g_display_width == 0 ? "Auto" : std::to_string(g_display_width)) 
+                        << std::endl;
+                continue;
+            }
+            
+            if (cmd.substr(0, 3) == "\\w ") {
+                try {
+                    g_display_width = std::stoi(cmd.substr(3));
+                    std::cout << "Display width set to " << g_display_width << std::endl;
+                } catch (...) {
+                    std::cout << "Invalid width." << std::endl;
+                }
+                continue;
+            }   
+
             try
             {
                 if(cmd[0] == '!'){
@@ -173,17 +190,17 @@ static void showBanner(){
     std::cout << "Ddbclient version " << VERSION << std::endl;
     std::cout << "Github: https://github.com/peeyee/ddbclient.git" << std::endl;
     std::string banner = R"(
------------------------------------------------------------
+----------------------------------------------------------
   _____          _         _      _         _____   ____  
- |  __ \        | |       | |    (_)       |  __ \ |  _ \ 
+ |  __ \        | |       | |    (_)       |  __ \ |  _ \
  | |  | |  ___  | | _ __  | |__   _  _ __  | |  | || |_) |
  | |  | | / _ \ | || '_ \ | '_ \ | || '_ \ | |  | ||  _ < 
  | |__| || (_) || || |_) || | | || || | | || |__| || |_) |
- |______/ \___/ |_|| .__/ |_| |_||_||_| |_||______/|_____/ 
+ |______/ \___/ |_|| .__/ |_| |_||_||_| |_||______/|_____/
                    | |                                    
                    |_|                            
 
------------------------------------------------------------
+----------------------------------------------------------
 )";
     std::cout << banner << std::endl;
 }
